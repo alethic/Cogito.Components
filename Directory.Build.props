@@ -2,11 +2,11 @@
     <PropertyGroup>
         <Authors>Jerome Haltom</Authors>
         <Company>Alethic Solutions</Company>
-        <RepositoryUrl>https://github.com/wasabii/Cogito.Components</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/alethic/Cogito.Components</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/alethic/Cogito.Components</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseUrl></PackageLicenseUrl>
-        <PackageProjectUrl>https://github.com/wasabii/Cogito.Components</PackageProjectUrl>
-        <PackageIconUrl>https://cloverluxussc.blob.core.windows.net/public/cogito-nuget-icon.png</PackageIconUrl>
+        <PackageIcon>icon.png</PackageIcon>
         <LangVersion>8.0</LangVersion>
     </PropertyGroup>
 </Project>
