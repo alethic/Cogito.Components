@@ -55,7 +55,7 @@ namespace Cogito.Components
             // run until cancelled
             while (cancellationToken.IsCancellationRequested == false)
             {
-                var runnable = parent.ComponentRegistry.RegistrationsFor(new TypedService(typeof(IRunnable))).ToArray();
+                var runnable = parent.ComponentRegistry.ServiceRegistrationsFor(new TypedService(typeof(IRunnable))).ToArray();
                 if (runnable.Length > 0)
                     await Task.WhenAll(runnable.Select(i => Task.Run(() => RunAsync(i, cancellationToken))));
 
@@ -82,7 +82,7 @@ namespace Cogito.Components
         /// <param name="registration"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        async Task RunAsync(IComponentRegistration registration, CancellationToken cancellationToken)
+        async Task RunAsync(ServiceRegistration registration, CancellationToken cancellationToken)
         {
             if (registration == null)
                 throw new ArgumentNullException(nameof(registration));
