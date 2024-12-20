@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageProjectReference Include="..\Cogito.Components\Cogito.Components.csproj">
+            <PackageTargetPath>.</PackageTargetPath>
+        </PackageProjectReference>
+    </ItemGroup>
+
+</Project>
