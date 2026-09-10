@@ -17,6 +17,7 @@ namespace Cogito.Components
     {
 
         readonly RunnableHost host;
+        readonly SemaphoreSlim sync = new SemaphoreSlim(1, 1);
         CancellationTokenSource cts;
         Task run;
 
@@ -30,35 +31,59 @@ namespace Cogito.Components
         }
 
         /// <summary>
-        /// Starts the <see cref="RunnableHost"/>.
+        /// Starts the <see cref="RunnableHost"/>. Returns without doing anything when it is already running.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            if (run != null)
-                throw new InvalidOperationException("RunnableHostService is already started.");
+            await sync.WaitAsync(cancellationToken);
 
-            cts = new CancellationTokenSource();
-            run = host.RunAsync(CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cts.Token).Token);
+            try
+            {
+                if (run != null)
+                    return;
 
-            return Task.CompletedTask;
+                cts = new CancellationTokenSource();
+                run = host.RunAsync(CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cts.Token).Token);
+            }
+            finally
+            {
+                sync.Release();
+            }
         }
 
         /// <summary>
-        /// Stops the <see cref="RunnableHost"/>.
+        /// Stops the <see cref="RunnableHost"/>. Returns without doing anything when it is not running; a caller that
+        /// arrives while another is stopping it returns once that one has finished.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            if (run == null)
-                throw new InvalidOperationException("RunnableHostService is already stopped.");
+            await sync.WaitAsync(cancellationToken);
 
-            // signal service shutdown, wait for termination
-            cts.Cancel();
-            await run;
-            run = null;
+            try
+            {
+                if (run == null)
+                    return;
+
+                // signal service shutdown, wait for termination
+                cts.Cancel();
+
+                try
+                {
+                    await run;
+                }
+                finally
+                {
+                    run = null;
+                }
+            }
+            finally
+            {
+                sync.Release();
+            }
         }
 
     }
